@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>¡Sorpresa de Cumpleaños!</title>
+    <title>¡Feliz Cumpleaños!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: sans-serif;
@@ -27,10 +28,23 @@
             text-align: center;
             z-index: 10;
         }
+        h1, h2, #countdown, .event-banner-message {
+            font-family: 'Dancing Script', cursive;
+        }
+        h1 {
+            font-size: 2.8em;
+            font-weight: bold;
+            color: #4a148c;
+            margin-bottom: 10px;
+        }
         #countdown {
-            font-size: 2em;
+            font-size: 2.2em;
             margin-bottom: 20px;
             color: #000;
+        }
+        h2 {
+            font-size: 1.8em;
+            margin-top: 0;
         }
         .calendar-container {
             display: grid;
@@ -43,36 +57,56 @@
             margin-bottom: 20px;
         }
         .day {
-            width: 30px;
-            height: 30px;
+            width: 35px;
+            height: 35px;
             display: flex;
             align-items: center;
             justify-content: center;
             border: 1px solid #a1887f;
             border-radius: 5px;
-            font-size: 0.9em;
+            font-size: 1em;
             position: relative;
+            background-color: #ffe0b2;
+            font-weight: bold;
+        }
+        .day.day-name {
+            background-color: transparent;
+            font-weight: bold;
+            color: #4a148c;
+            border: none;
+        }
+        .day.empty-day {
+            background-color: transparent;
+            border: none;
         }
         .passed {
-            background-color: #d1c4e9;
+            background-color: #fce4ec;
             text-decoration: line-through;
-            color: #666;
+            color: #880e4f;
+            font-weight: bold;
         }
-        .future {
-            /* Estilo por defecto */
+        .passed.clickable-day {
+            text-decoration: none;
+            color: #333;
+        }
+        .clickable-day {
+            cursor: pointer;
+            background-color: #d1c4e9;
+            font-weight: bold;
+            border-color: #8e24aa;
+        }
+        .clickable-day:hover {
+            background-color: #b39ddb;
         }
         .floating-decoration {
-            position: absolute;
+            position: fixed;
             height: auto;
             opacity: 0.7;
             z-index: 1;
             pointer-events: none;
         }
-        .balloon {
-            width: 70px;
-        }
-        .confetti {
-            width: 25px;
+        .garland, .cactus, .orchid {
+            animation: floatSlowly var(--duration) ease-in-out infinite alternate;
         }
         .garland {
             width: 200px;
@@ -80,13 +114,14 @@
         .cactus, .orchid {
             width: 50px;
         }
+
         .important-day::after {
             content: attr(data-days);
             position: absolute;
             top: -25px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: #e91e63; /* Rojo */
+            background-color: #e91e63;
             color: white;
             padding: 5px 10px;
             border-radius: 5px;
@@ -94,32 +129,119 @@
             white-space: nowrap;
             z-index: 10;
         }
+
+        .event-banner-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        .event-banner-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .event-banner-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            max-width: 90%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .event-banner-image {
+            max-width: 100%;
+            max-height: 70vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .event-banner-image img {
+            max-width: 100%;
+            max-height: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        .event-banner-message {
+            color: #4a148c;
+            font-weight: bold;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding: 0 10px;
+        }
+        .event-banner-content button {
+            background-color: #8e24aa;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.2s ease-in-out;
+            margin-top: 15px;
+        }
+        .event-banner-content button:hover {
+            background-color: #6a1b9a;
+        }
+
+        @keyframes floatSlowly {
+            0% { transform: translate(0, 0) rotate(var(--initial-rotation)); }
+            50% { transform: translate(var(--float-x), var(--float-y)) rotate(calc(var(--initial-rotation) + var(--rotation-amplitude))); }
+            100% { transform: translate(0, 0) rotate(var(--initial-rotation)); }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>¡Su cumpleaños esta cerca!</h1>
+        <h1>¡Feliz cumpleaños señorita Eugenia!</h1>
         <div id="countdown"></div>
-        <h2>Para cumplir 31</h2>
+        <h2 id="ageText">Para cumplir 31</h2>
         <div id="calendar" class="calendar-container"></div>
         <div id="updates"></div>
     </div>
+
+    <div id="eventBannerOverlay" class="event-banner-overlay">
+        <div class="event-banner-content">
+            <p id="bannerText" class="event-banner-message"></p>
+            <div class="event-banner-image">
+                <img id="bannerImage" src="" alt="Imagen de Evento">
+            </div>
+            <button id="closeBanner">Cerrar</button>
+        </div>
+    </div>
+
     <script>
-        const birthdayDate = new Date('2025-05-26');
+        const birthdayDate = new Date('2025-05-26T00:00:00');
+        // Usando la URL de la imagen de la guirnalda/muñequito que me enviaste y se cargó correctamente
         const importantImageUrl = "https://64.media.tumblr.com/ab68c0977e2e1b0345ae79d31749555f/4e447b1a46ddeea7-79/s400x600/2c24f95a805378e30726654fcfc13b8da5c2bfad.pnj";
-        const decorationUrls = [
-            { url: "https://64.media.tumblr.com/de8be62476ba3e3ee188acda622a4362/3be416197abc26a4-4c/s400x600/e46b4b5cc1729d41f73393f63dbc69a002432823.png", class: "balloon" },
-            { url: "https://64.media.tumblr.com/4688288447bf4ce1815b7d2f0fdd1c53/3be416197abc26a4-b5/s400x600/48d6b8cd666abd745cc60537de7c5fcdb7e184f0.png", class: "balloon" },
-            { url: "https://64.media.tumblr.com/4ba05863828d63848947cc68cd71396d/4e447b1a46ddeea7-b8/s400x600/62090be7f2121414db54d701a640844e24d0cda1.pnj", class: "confetti" },
-            { url: importantImageUrl, class: "garland" },
+
+        const generalDecorationUrls = [
+            // Tu guirnalda/muñequito original
+            { url: "https://64.media.tumblr.com/ab68c0977e2e1b0345ae79d31749555f/4e447b1a46ddeea7-79/s400x600/2c24f95a805378e30726654fcfc13b8da5c2bfad.pnj", class: "garland" },
+            // Tus cactus originales (basado en URLs que me diste antes y que no mostraron error en tu consola)
             { url: "https://png.pngtree.com/png-clipart/20240701/original/pngtree-vector-cactus-cartoon-design-png-image_15460011.png", class: "cactus" },
             { url: "https://static.vecteezy.com/system/resources/previews/023/985/121/non_2x/cute-cartoon-gardening-cactus-plant-potted-drawing-illustration-free-png.png", class: "cactus" },
             { url: "https://png.pngtree.com/png-clipart/20220125/original/pngtree-cartoon-succulent-pot-png-image_7201569.png", class: "cactus" },
             { url: "https://images.vexels.com/media/users/3/181368/isolated/preview/af0510bfd3f550449c746b8a5af0a608-plantas-suculentas-verde-tranquilo-ilustracion.png", class: "cactus" },
+            // Tus orquídeas originales (basado en URLs que me diste antes y que no mostraron error en tu consola)
             { url: "https://png.pngtree.com/png-vector/20230728/ourmid/pngtree-orchid-clipart-two-pink-orchids-on-a-white-background-cartoon-vector-png-image_6815883.png", class: "orchid" },
             { url: "https://png.pngtree.com/png-vector/20230831/ourmid/pngtree-blue-orchid-flowers-png-image_9199983.png", class: "orchid" }
         ];
-        const numDecorations = 40;
+        const minInstancesPerImage = 5;
+        const totalGeneralDecorations = generalDecorationUrls.length * minInstancesPerImage;
 
         function getRandomInt(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -127,21 +249,33 @@
 
         function addFloatingDecorations() {
             const body = document.body;
-            const bodyWidth = body.offsetWidth;
-            const bodyHeight = body.offsetHeight;
+            const bodyWidth = window.innerWidth;
+            const bodyHeight = window.innerHeight;
 
-            for (let i = 0; i < numDecorations; i++) {
-                const decoration = decorationUrls[getRandomInt(0, decorationUrls.length - 1)];
+            document.querySelectorAll('.floating-decoration').forEach(el => el.remove());
+
+            for (let i = 0; i < totalGeneralDecorations; i++) {
+                const decoration = generalDecorationUrls[getRandomInt(0, generalDecorationUrls.length - 1)];
                 const img = document.createElement('img');
                 img.src = decoration.url;
                 img.classList.add('floating-decoration', decoration.class);
 
-                img.style.top = `${getRandomInt(0, bodyHeight)}px`;
-                img.style.left = `${getRandomInt(0, bodyWidth)}px`;
-                img.style.transform = `rotate(${getRandomInt(-30, 30)}deg)`;
+                const startX = getRandomInt(0, bodyWidth - 100);
+                const startY = getRandomInt(0, bodyHeight - 100);
+                const duration = getRandomInt(10, 20);
+                const floatX = getRandomInt(-50, 50);
+                const floatY = getRandomInt(-50, 50);
+                const initialRotation = getRandomInt(-15, 15);
+                const rotationAmplitude = getRandomInt(-10, 10);
+
+                img.style.left = `${startX}px`;
+                img.style.top = `${startY}px`;
+                img.style.setProperty('--duration', `${duration}s`);
+                img.style.setProperty('--float-x', `${floatX}px`);
+                img.style.setProperty('--float-y', `${floatY}px`);
+                img.style.setProperty('--initial-rotation', `${initialRotation}deg`);
+                img.style.setProperty('--rotation-amplitude', `${rotationAmplitude}deg`);
                 img.style.opacity = getRandomInt(50, 100) / 100;
-                img.style.zIndex = 1;
-                img.style.position = 'absolute';
                 img.style.pointerEvents = 'none';
 
                 body.appendChild(img);
@@ -150,24 +284,70 @@
 
         function updateCountdown() {
             const now = new Date();
-            const timeLeft = birthdayDate.getTime() - now.getTime();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const timeLeft = birthdayDate.getTime() - today.getTime();
             const daysLeft = Math.ceil(timeLeft / (1000 * 60 * 60 * 24));
+            const ageTextElement = document.getElementById('ageText');
 
-            document.getElementById('countdown').textContent = `Faltan ${daysLeft} días... ¡Prepárese!`;
+            if (daysLeft <= 0) {
+                document.getElementById('countdown').textContent = "¡El gran día ha llegado!";
+                ageTextElement.textContent = "Ha cumplido 31";
+            } else {
+                document.getElementById('countdown').textContent = `Faltan ${daysLeft} días... ¡Prepárese!`;
+                ageTextElement.textContent = "Para cumplir 31";
+            }
 
             const calendarDiv = document.getElementById('calendar');
-            const futureDays = calendarDiv.querySelectorAll('.future');
-            futureDays.forEach(dayElement => {
-                const day = parseInt(dayElement.textContent);
-                const currentDate = new Date(birthdayDate);
-                currentDate.setDate(26 - (daysLeft - 1)); // 
+            const allDays = calendarDiv.querySelectorAll('.day');
 
-                if (currentDate.getDate() === day && daysLeft <= 5 && daysLeft > 0) {
-                    dayElement.classList.add('important-day');
-                    dayElement.setAttribute('data-days', `¡${daysLeft} días!`);
+            allDays.forEach(dayElement => {
+                if (dayElement.classList.contains('day-name') || dayElement.classList.contains('empty-day')) {
+                    return;
+                }
+
+                dayElement.classList.remove('important-day', 'clickable-day', 'passed');
+                dayElement.removeAttribute('data-days');
+                dayElement.onclick = null;
+
+                const day = parseInt(dayElement.textContent);
+                if (isNaN(day)) {
+                    return;
+                }
+
+                const displayMonth = birthdayDate.getMonth();
+                const displayYear = birthdayDate.getFullYear();
+
+                const dayInCalendarDate = new Date(displayYear, displayMonth, day);
+
+                if (dayInCalendarDate.getTime() < today.getTime()) {
+                    dayElement.classList.add('passed');
+                    dayElement.textContent = day;
                 } else {
-                    dayElement.classList.remove('important-day');
-                    dayElement.removeAttribute('data-days');
+                    dayElement.classList.remove('passed');
+                    dayElement.textContent = day;
+                }
+
+                if (displayYear === today.getFullYear() && displayMonth === today.getMonth()) {
+                    if (day === 24 && today.getDate() === 24) {
+                        dayElement.classList.add('clickable-day');
+                        dayElement.onclick = () => showEventBanner("¡El entusiasmo crece con cada amanecer! ¡Un paso más cerca de la gran celebración!");
+                    } else if (day === 25 && today.getDate() === 25) {
+                        dayElement.classList.add('clickable-day');
+                        dayElement.onclick = () => showEventBanner("¡La cuenta regresiva final ha comenzado! Mañana es el gran día, ¿list@ para la magia?");
+                    } else if (day === 26 && today.getDate() === 26) {
+                        dayElement.classList.add('clickable-day');
+                        dayElement.onclick = () => showEventBanner("¡Feliz Cumpleaños Eugenia! Estoy muy contento de poder expresar mi emocion de decirle feliz cumpleños, agradecer por un año mas de vida para usted. Espero que usted este muy contenta, se sienta bien y sobre todo que este dia este lleno de muchas alegrias, quiero que sepa que con todo mi corazon y cariño le expreso mi admiracion, deseo que todos sus propositos se cumplan, soy quien siempre festejara sus logros, el que este cumpliendo un año mas es uno, se que aun habran muchos mas. Es usted una gran mujer, persona, amiga, compañera y por eso es que he llegado a quererla mucho, mucho. ¡La quiero bastante! Con amor: FY");
+                    }
+                }
+
+                const relevantDayForBanner = new Date(birthdayDate.getFullYear(), birthdayDate.getMonth(), birthdayDate.getDate() - (daysLeft - 1));
+
+                if (dayInCalendarDate.getFullYear() === relevantDayForBanner.getFullYear() &&
+                    dayInCalendarDate.getMonth() === relevantDayForBanner.getMonth() &&
+                    dayInCalendarDate.getDate() === relevantDayForBanner.getDate() &&
+                    daysLeft > 0 && daysLeft <= 5) {
+                    dayElement.classList.add('important-day');
+                    dayElement.setAttribute('data-days', `¡Faltan ${daysLeft} días!`);
                 }
             });
         }
@@ -176,24 +356,26 @@
             const calendarDiv = document.getElementById('calendar');
             calendarDiv.innerHTML = '';
 
-            const now = new Date();
-            const birthdayMonth = birthdayDate.getMonth();
-            const birthdayYear = birthdayDate.getFullYear();
-            const firstDayOfMonth = new Date(birthdayYear, birthdayMonth, 1);
-            const lastDayOfMonth = new Date(birthdayYear, birthdayMonth + 1, 0);
+            const now = new Date(); // Using actual current date for calendar generation
+            const displayMonth = birthdayDate.getMonth();
+            const displayYear = birthdayDate.getFullYear();
+
+            const firstDayOfMonth = new Date(displayYear, displayMonth, 1);
+            const lastDayOfMonth = new Date(displayYear, displayMonth + 1, 0);
             const daysInMonth = lastDayOfMonth.getDate();
             const startingDay = firstDayOfMonth.getDay();
 
             const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-            dayNames.forEach(day => {
+            dayNames.forEach(name => {
                 const dayElement = document.createElement('div');
-                dayElement.classList.add('day');
-                dayElement.textContent = day;
+                dayElement.classList.add('day', 'day-name');
+                dayElement.textContent = name;
                 calendarDiv.appendChild(dayElement);
             });
 
             for (let i = 0; i < startingDay; i++) {
                 const emptyDiv = document.createElement('div');
+                emptyDiv.classList.add('day', 'empty-day');
                 calendarDiv.appendChild(emptyDiv);
             }
 
@@ -201,19 +383,25 @@
                 const dayElement = document.createElement('div');
                 dayElement.classList.add('day');
                 dayElement.textContent = day;
-
-                const currentDate = new Date(birthdayYear, birthdayMonth, day);
-                if (currentDate < now) {
-                    dayElement.classList.add('passed');
-                    dayElement.textContent = 'X';
-                } else {
-                    dayElement.classList.add('future');
-                }
                 calendarDiv.appendChild(dayElement);
             }
         }
 
-        function addUpdate() {}
+        function showEventBanner(message) {
+            const overlay = document.getElementById('eventBannerOverlay');
+            const bannerImage = document.getElementById('bannerImage');
+            const bannerText = document.getElementById('bannerText');
+
+            bannerImage.src = importantImageUrl;
+            bannerText.textContent = message;
+            overlay.classList.add('active');
+        }
+
+        function hideEventBanner() {
+            document.getElementById('eventBannerOverlay').classList.remove('active');
+        }
+
+        document.getElementById('closeBanner').addEventListener('click', hideEventBanner);
 
         updateCountdown();
         generateCalendar();
