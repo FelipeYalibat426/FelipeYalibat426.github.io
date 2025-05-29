@@ -225,18 +225,14 @@
 
     <script>
         const birthdayDate = new Date('2025-05-26T00:00:00');
-        // Usando la URL de la imagen de la guirnalda/muñequito que me enviaste y se cargó correctamente
         const importantImageUrl = "https://64.media.tumblr.com/ab68c0977e2e1b0345ae79d31749555f/4e447b1a46ddeea7-79/s400x600/2c24f95a805378e30726654fcfc13b8da5c2bfad.pnj";
 
         const generalDecorationUrls = [
-            // Tu guirnalda/muñequito original
             { url: "https://64.media.tumblr.com/ab68c0977e2e1b0345ae79d31749555f/4e447b1a46ddeea7-79/s400x600/2c24f95a805378e30726654fcfc13b8da5c2bfad.pnj", class: "garland" },
-            // Tus cactus originales (basado en URLs que me diste antes y que no mostraron error en tu consola)
             { url: "https://png.pngtree.com/png-clipart/20240701/original/pngtree-vector-cactus-cartoon-design-png-image_15460011.png", class: "cactus" },
             { url: "https://static.vecteezy.com/system/resources/previews/023/985/121/non_2x/cute-cartoon-gardening-cactus-plant-potted-drawing-illustration-free-png.png", class: "cactus" },
             { url: "https://png.pngtree.com/png-clipart/20220125/original/pngtree-cartoon-succulent-pot-png-image_7201569.png", class: "cactus" },
             { url: "https://images.vexels.com/media/users/3/181368/isolated/preview/af0510bfd3f550449c746b8a5af0a608-plantas-suculentas-verde-tranquilo-ilustracion.png", class: "cactus" },
-            // Tus orquídeas originales (basado en URLs que me diste antes y que no mostraron error en tu consola)
             { url: "https://png.pngtree.com/png-vector/20230728/ourmid/pngtree-orchid-clipart-two-pink-orchids-on-a-white-background-cartoon-vector-png-image_6815883.png", class: "orchid" },
             { url: "https://png.pngtree.com/png-vector/20230831/ourmid/pngtree-blue-orchid-flowers-png-image_9199983.png", class: "orchid" }
         ];
@@ -282,16 +278,27 @@
             }
         }
 
-        function updateCountdown() {
+        function getEffectiveDate() {
             const now = new Date();
-            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const birthdayHasPassed = now.getTime() >= birthdayDate.getTime();
+
+            if (birthdayHasPassed) {
+                return new Date(2025, 4, 26);
+            } else {
+                return now;
+            }
+        }
+
+        function updateCountdown() {
+            const effectiveNow = getEffectiveDate();
+            const today = new Date(effectiveNow.getFullYear(), effectiveNow.getMonth(), effectiveNow.getDate());
             const timeLeft = birthdayDate.getTime() - today.getTime();
             const daysLeft = Math.ceil(timeLeft / (1000 * 60 * 60 * 24));
             const ageTextElement = document.getElementById('ageText');
 
             if (daysLeft <= 0) {
-                document.getElementById('countdown').textContent = "¡El gran día ha llegado!";
-                ageTextElement.textContent = "Ha cumplido 31";
+                document.getElementById('countdown').textContent = "¡El gran día llegó!";
+                ageTextElement.textContent = "Hoy cumplió 31 años ¡Felicidades!";
             } else {
                 document.getElementById('countdown').textContent = `Faltan ${daysLeft} días... ¡Prepárese!`;
                 ageTextElement.textContent = "Para cumplir 31";
@@ -333,7 +340,7 @@
                         dayElement.onclick = () => showEventBanner("¡El entusiasmo crece con cada amanecer! ¡Un paso más cerca de la gran celebración!");
                     } else if (day === 25 && today.getDate() === 25) {
                         dayElement.classList.add('clickable-day');
-                        dayElement.onclick = () => showEventBanner("¡La cuenta regresiva final ha comenzado! Mañana es el gran día, ¿list@ para la magia?");
+                        dayElement.onclick = () => showEventBanner("¡La cuenta regresiva final ha comenzado! Mañana es el gran día, ¿lista para la magia?");
                     } else if (day === 26 && today.getDate() === 26) {
                         dayElement.classList.add('clickable-day');
                         dayElement.onclick = () => showEventBanner("¡Feliz Cumpleaños Eugenia! Estoy muy contento de poder expresar mi emocion de decirle feliz cumpleños, agradecer por un año mas de vida para usted. Espero que usted este muy contenta, se sienta bien y sobre todo que este dia este lleno de muchas alegrias, quiero que sepa que con todo mi corazon y cariño le expreso mi admiracion, deseo que todos sus propositos se cumplan, soy quien siempre festejara sus logros, el que este cumpliendo un año mas es uno, se que aun habran muchos mas. Es usted una gran mujer, persona, amiga, compañera y por eso es que he llegado a quererla mucho, mucho. ¡La quiero bastante! Con amor: FY");
@@ -356,7 +363,7 @@
             const calendarDiv = document.getElementById('calendar');
             calendarDiv.innerHTML = '';
 
-            const now = new Date(); // Using actual current date for calendar generation
+            const effectiveNow = getEffectiveDate();
             const displayMonth = birthdayDate.getMonth();
             const displayYear = birthdayDate.getFullYear();
 
